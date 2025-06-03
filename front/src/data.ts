@@ -1,6 +1,5 @@
-import type { Debate } from './types';
 
-export const fakeDebates: Debate[] = [
+export const fakeDebates: any[] = [
   {
     id: '1',
     question: "Faut-il interdire les voitures en centre-ville ?",
