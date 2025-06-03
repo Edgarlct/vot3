@@ -2,7 +2,8 @@
   <div class="card">
     <p><strong>Catégorie :</strong> {{ debate.category }}</p>
     <p><strong>Question :</strong> {{ debate.question }}</p>
-    <p>Clôture : {{ debate.closesAt }}</p>
+    <p>Clôture : {{ debate.expiatedAt }}</p>
+    <p>vote ? : {{debate.hasVoted}}</p>
     <button @click="$emit('vote', debate.id, 'yes')">Oui</button>
     <button @click="$emit('vote', debate.id, 'no')">Non</button>
   </div>

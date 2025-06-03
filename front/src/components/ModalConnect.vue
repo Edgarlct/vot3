@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import { useWeb3Store } from '../stores/web3';
+import {connectWallet} from "../../utils/wallet.ts";
 
 defineProps<{ visible: boolean }>();
 const emit = defineEmits<{
@@ -18,9 +19,16 @@ const emit = defineEmits<{
 
 const store = useWeb3Store();
 
-function connect() {
-  store.connect();
-  emit('close');
+async function connect() {
+  try {
+    const account = await connectWallet();
+    console.log("Wallet connecté:", account);
+    await store.connect(account);
+    emit('close');
+  } catch (error) {
+    console.error('Erreur de connexion:', error);
+    return;
+  }
 }
 </script>
 

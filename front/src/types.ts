@@ -1,8 +1,11 @@
 export interface Debate {
   id: string;
   question: string;
-  closesAt: string;
-  votesYes: number;
-  votesNo: number;
+  creator: string;
+  yesVotesCount: number;
+  noVotesCount: number;
+  voteAnswer: string;
+  hasVoted: boolean;
   category: string;
+  expiatedAt: number;
 }
