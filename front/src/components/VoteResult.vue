@@ -1,8 +1,8 @@
 <template>
   <div class="result">
     <p>{{ debate.question }}</p>
-    <p>Oui: {{ debate.votesYes }}</p>
-    <p>Non: {{ debate.votesNo }}</p>
+    <p>Oui: {{ debate.yesVotesCount }}</p>
+    <p>Non: {{ debate.noVotesCount }}</p>
   </div>
 </template>
 
