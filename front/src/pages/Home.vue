@@ -2,6 +2,9 @@
   <div class="container">
     <div class="header">
       <h1>Débats en cours</h1>
+      <button class="connect-btn" @click="connectOrDisconnect">
+        {{ store.isConnected ? "Déconnexion" : "Connexion" }}
+      </button>
     </div>
 
     <div v-if="loading" class="loading">
