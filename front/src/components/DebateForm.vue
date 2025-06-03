@@ -26,7 +26,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-// import type { Debate } from '../types';
 
 const question = ref('');
 const category = ref('');
@@ -40,20 +39,22 @@ const categories = [
   'Technologie'
 ];
 
-// const emit = defineEmits<{
-//   (e: 'submit', debate: Debate): void;
-// }>();
+type DebateFormData = {
+  question: string;
+  category: string;
+  closesAt: string;
+};
+
+const emit = defineEmits<{
+  (e: 'submit', data: DebateFormData): void;
+}>();
 
 function submitForm() {
-  // const newDebate: Debate = {
-  //   id: crypto.randomUUID(),
-  //   question: question.value,
-  //   category: category.value,
-  //   closesAt: closesAt.value,
-  //   votesYes: 0,
-  //   votesNo: 0,
-  // };
-
-  // emit('submit', newDebate);
+  emit('submit', {
+    question: question.value,
+    category: category.value,
+    closesAt: closesAt.value
+  });
 }
+
 </script>

@@ -1,32 +1,67 @@
 <template>
-  <div>
-    <h1>Débats en cours</h1>
+  <div class="container">
+    <div class="header">
+      <h1>Débats en cours</h1>
+      <button class="connect-btn" @click="connectOrDisconnect">
+        {{ store.isConnected ? "Déconnexion" : "Connexion" }}
+      </button>
+    </div>
+
+    <div v-if="loading" class="loading">
+      <p>Chargement des débats...</p>
+    </div>
+
+    <div v-else-if="activeDebates.length === 0" class="no-debates">
+      <p>Aucun débat en cours pour le moment.</p>
+    </div>
+
     <DebateCard
-        v-for="debate in debates"
+        v-else
+        v-for="debate in activeDebates"
         :key="debate.id"
         :debate="debate"
         @vote="handleVote"
     />
+
     <ModalConnect :visible="showModal" @close="showModal = false" />
   </div>
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useWeb3Store } from '../stores/web3';
+import { useDebates } from '../composables/useDebates';
 import DebateCard from '../components/DebateCard.vue';
 import ModalConnect from '../components/ModalConnect.vue';
-import type { Debate } from '../types';
-import {readContract, switchChain, writeContract} from "../../utils/wallet.ts";
 import Vote from '../abi/Vote.json';
+import {
+  connectWallet,
+  disconnectWallet,
+  writeContract
+} from '../../utils/wallet';
 
 const store = useWeb3Store();
-const debates = ref<Debate[]>([]);
+const { debates, loading, getDebates } = useDebates();
 const showModal = ref(false);
+
+const activeDebates = computed(() => {
+  const now = Math.floor(Date.now() / 1000);
+  return debates.value.filter(d => d.expiatedAt > now);
+});
 
 onMounted(() => {
   getDebates();
-})
+});
+
+async function connectOrDisconnect() {
+  if (store.isConnected) {
+    await disconnectWallet();
+    await store.disconnect();
+  } else {
+    const account = await connectWallet();
+    await store.connect(account);
+  }
+}
 
 function handleVote(debateId: string, vote: 'yes' | 'no') {
   if (!store.isConnected) {
@@ -34,25 +69,7 @@ function handleVote(debateId: string, vote: 'yes' | 'no') {
     return;
   }
 
-  writeContract(Vote.abi, "vote", [debateId, vote === 'yes'])
-
+  writeContract(Vote.abi, 'vote', [debateId, vote === 'yes']);
   console.log(`Vote: ${vote} pour débat ${debateId} par ${store.userAddress}`);
-}
-
-async function getDebates() {
-  await switchChain("0xAA36A7")
-  const debatesData = await readContract(Vote.abi,"getAllProposals", [], true)
-  const formattedDebates = debatesData.map((debate:any) => ({
-    id: debate[0],
-    question: debate[1],
-    category: debate[2],
-    expiatedAt: debate[3],
-    creator: debate[4],
-    yesVotesCount: debate[5],
-    noVotesCount: debate[6],
-    voteAnswer: debate[7],
-    hasVoted: debate[8]
-  }));
-  debates.value = formattedDebates;
 }
 </script>

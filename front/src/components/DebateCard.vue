@@ -2,10 +2,12 @@
   <div class="card">
     <p><strong>Catégorie :</strong> {{ debate.category }}</p>
     <p><strong>Question :</strong> {{ debate.question }}</p>
-    <p>Clôture : {{ debate.expiatedAt }}</p>
-    <p>vote ? : {{debate.hasVoted}}</p>
-    <button @click="$emit('vote', debate.id, 'yes')">Oui</button>
-    <button @click="$emit('vote', debate.id, 'no')">Non</button>
+    <p><strong>Clôture :</strong> {{ formatDate(debate.expiatedAt) }}</p>
+    <div v-if="!debate.hasVoted" class="card-buttons">
+      <button class="btn-yes" @click="$emit('vote', debate.id, 'yes')">Oui</button>
+      <button class="btn-no" @click="$emit('vote', debate.id, 'no')">Non</button>
+    </div>
+    <p v-else>Vous avez déjà voté.</p>
   </div>
 </template>
 
@@ -16,12 +18,16 @@ import type { Debate } from '../types';
 defineProps<{
   debate: Debate;
 }>();
-</script>
 
-<style scoped>
-.card {
-  border: 1px solid #ccc;
-  padding: 1rem;
-  margin-bottom: 1rem;
+function formatDate(timestamp: number): string {
+  const date = new Date(timestamp * 1000);
+  return date.toLocaleString('fr-FR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 }
-</style>
+
+</script>

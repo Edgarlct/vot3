@@ -1,8 +1,18 @@
 <template>
   <div class="result">
-    <p>{{ debate.question }}</p>
-    <p>Oui: {{ debate.yesVotesCount }}</p>
-    <p>Non: {{ debate.noVotesCount }}</p>
+    <p><strong>Catégorie :</strong> {{ debate.category }}</p>
+    <p><strong>Question :</strong> {{ debate.question }}</p>
+
+    <div class="vote-stats">
+      <div class="vote-count vote-yes">
+        <div>Oui</div>
+        <div>{{ debate.yesVotesCount }}</div>
+      </div>
+      <div class="vote-count vote-no">
+        <div>Non</div>
+        <div>{{ debate.noVotesCount }}</div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -14,11 +24,3 @@ defineProps<{
   debate: Debate;
 }>();
 </script>
-
-<style scoped>
-.result {
-  border: 1px solid #aaa;
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
-</style>
