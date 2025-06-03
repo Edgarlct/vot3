@@ -3,8 +3,8 @@ import {useWeb3Store} from "../src/stores/web3.ts";
 
 export function connectWallet(): Promise<string> {
   return new Promise((resolve, reject) => {
-    if (typeof window.ethereum !== "undefined") {
-      window.ethereum
+    if (typeof (window as any).ethereum !== "undefined") {
+      (window as any).ethereum
         .request({ method: "eth_requestAccounts" })
         .then((accounts:string[]) => {
           if (accounts.length > 0) {
@@ -24,10 +24,10 @@ export function connectWallet(): Promise<string> {
 
 export async function switchChain(chainId: string) {
   try {
-    if (typeof window.ethereum === "undefined") {
+    if (typeof (window as any).ethereum === "undefined") {
       return;
     }
-    const wallet = window.ethereum;
+    const wallet = (window as any).ethereum;
     await wallet.request({
       method: "wallet_switchEthereumChain",
       params: [{ chainId }],
@@ -39,7 +39,7 @@ export async function switchChain(chainId: string) {
       (error as any).code &&
       (error as any).code + "" === "4902"
     ) {
-      window.alert("Please add the chain to your wallet");
+      (window as any).alert("Please add the chain to your wallet");
     } else {
       console.log("Chain switch failed, trying to add the chain");
     }
@@ -54,14 +54,14 @@ export async function callContract(
   requiresSigner: boolean = false // New parameter
 ): Promise<any> {
   try {
-    if (typeof window.ethereum === "undefined") {
+    if (typeof (window as any).ethereum === "undefined") {
       throw new Error("MetaMask is not installed");
     }
     const store = useWeb3Store();
     const contractAddress = store.contractAddress;
 
     // Create provider
-    const provider = new ethers.BrowserProvider(window.ethereum);
+    const provider = new ethers.BrowserProvider((window as any).ethereum);
 
     if (isWriteOperation || requiresSigner) {
       // For write operations or methods that require signer
@@ -116,8 +116,8 @@ export async function writeContract(
 
 export async function disconnectWallet(): Promise<void> {
   return new Promise((resolve, reject) => {
-    if (typeof window.ethereum !== "undefined") {
-      window.ethereum
+    if (typeof (window as any).ethereum !== "undefined") {
+      (window as any).ethereum
         .request({ method: "wallet_revokePermissions", params: [{ eth_accounts: {} }] })
         .then(() => {
           resolve();
